@@ -19,6 +19,7 @@ namespace MysteryWord
         {
             bool noWinner = true;
             int guesses = 8;
+            string userInput = "";
 
             Console.WriteLine("Let's play Hangman! \n");
             Console.WriteLine("You have 8 tries to guess the word correctly. \n");
@@ -31,44 +32,44 @@ namespace MysteryWord
 
             Console.WriteLine("Here is your word. \n");
 
-            foreach (char letter in wordList[randomNumber])
-            {
-                Console.Write("_" + " ");
-            }
+            string word = wordList[randomNumber];
+            List<char> blanks = new List<char>();
 
-            Console.WriteLine("\n");
+            for (int i = 0; i < word.Length; i++)
+            {
+                blanks.Add('_');
+            }
 
             while (noWinner)
             {
-                if (guesses > 0 && !validInput())
+                Console.Write(string.Join(" ", blanks));
+                Console.WriteLine("\n");
+                Console.Write("Choose a letter: ");
+                userInput = Console.ReadLine();
+
+                if (guesses > 1 && !validInput(userInput))
                 {
+                    Console.Write("Invalid input. ");
                     guesses--;
-                    Console.WriteLine($"You have {guesses} guesses left. \n");
                 }
-                else if (guesses > 0 && validInput())
+                else if (guesses > 1 && validInput(userInput))
                 {
-                    
+                    blanks = FindAndReplace(word, userInput, blanks);
                     //wordList[randomNumber].Replace("_",)
                 }
                 else
                 {
+                    Console.WriteLine("DEBUG!!!! Game Over");
                     noWinner = false;
                 }
+                Console.WriteLine($"You have {guesses} guesses left. \n");
             }
-
-            //Console.WriteLine(wordList[randomNumber]);
         }
 
-        static bool validInput(List<string> randomWord)
+        static bool validInput(string input)
         {
-            string userInput = "";
-
-            Console.Write("Choose a letter: ");
-            userInput = Console.ReadLine();
-
-            if (!Regex.IsMatch(userInput, @"^[a-zA-Z]+$"))
+            if (!Regex.IsMatch(input, @"^[a-zA-Z]+$"))
             {
-                Console.Write("Invalid input. ");
                 return false;
             }
             else
@@ -76,12 +77,19 @@ namespace MysteryWord
                 return true;
             }
         }
+        
 
-        /*
-        static List<string> FindAndReplace(List<string> randomWord, string find, string replace)
+        static List<char> FindAndReplace(string randomWord, string input, List<char> blank)
         {
+            for (int j = 0; j < randomWord.Length; j++)
+            {
+                if (randomWord[j] == input[0])
+                {
+                    blank[j] = input[0];
+                }
+            }
 
+            return blank;
         }
-        */
     }
 }
