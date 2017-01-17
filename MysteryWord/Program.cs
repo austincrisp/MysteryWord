@@ -46,29 +46,46 @@ namespace MysteryWord
                 Console.WriteLine("\n");
                 Console.Write("Choose a letter: ");
                 userInput = Console.ReadLine();
+                Console.WriteLine();
 
-                if (guesses > 1 && !validInput(userInput))
+                if (guesses >= 1 && !validInput(userInput))
                 {
-                    Console.Write("Invalid input. ");
-                    guesses--;
+                    Console.Write("Invalid input. Try again. ");
                 }
-                else if (guesses > 1 && validInput(userInput))
+                else if (guesses >= 1 && validInput(userInput))
                 {
                     blanks = FindAndReplace(word, userInput, blanks);
-                    //wordList[randomNumber].Replace("_",)
+
+                    if (!blanks.Contains(userInput[0]))
+                    {
+                        Console.Write($"{userInput} does not exist in this word. Try again. \n");
+                        guesses--;
+                    }
                 }
-                else
+
+                if (guesses < 1 && blanks.Contains('_'))
                 {
-                    Console.WriteLine("DEBUG!!!! Game Over");
+                    Console.WriteLine(word);
+                    Console.WriteLine("You failed to guess the word. You Lose! Game Over!");
                     noWinner = false;
+                    break;
                 }
+                else if (guesses >= 1 && !blanks.Contains('_'))
+                {
+                    Console.WriteLine(word);
+                    Console.WriteLine();
+                    Console.WriteLine("CONGRATULATIONS! You guessed the word. You Win! Game Over!");
+                    noWinner = false;
+                    break;
+                }
+
                 Console.WriteLine($"You have {guesses} guesses left. \n");
             }
         }
 
         static bool validInput(string input)
         {
-            if (!Regex.IsMatch(input, @"^[a-zA-Z]+$"))
+            if (!Regex.IsMatch(input, @"^[a-zA-Z-]+$"))
             {
                 return false;
             }
@@ -77,7 +94,7 @@ namespace MysteryWord
                 return true;
             }
         }
-        
+
 
         static List<char> FindAndReplace(string randomWord, string input, List<char> blank)
         {
